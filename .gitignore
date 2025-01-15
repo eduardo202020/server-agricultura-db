@@ -1,2 +1,4 @@
 .env
 /codetest
+/__pycache__
+__pycache__/
