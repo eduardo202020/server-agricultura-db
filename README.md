@@ -31,7 +31,8 @@ Este proyecto utiliza **FastAPI**, **LangChain**, **OpenAI** y **Chroma** para c
 ## 📦 Instalación
 
 ### **1. Clona el Repositorio**
+
 ```bash
 git clone https://github.com/tu_usuario/diagnostico-plantas.git
 cd diagnostico-plantas
-```
+
