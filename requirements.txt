@@ -2,5 +2,5 @@ fastapi
 uvicorn
 langchain
 langchain-chroma
-langchain-openai
 python-dotenv
+langchain-openai
