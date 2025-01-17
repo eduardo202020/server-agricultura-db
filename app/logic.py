@@ -1,7 +1,6 @@
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from dotenv import load_dotenv
-import json
 
 # Cargar variables de entorno
 load_dotenv()
@@ -12,6 +11,12 @@ llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7, max_tokens=80)  # Aumen
 
 
 vectorstore = Chroma(persist_directory="chroma_db", embedding_function=embeddings)
+
+# funcion getslug para crear el slug en funcion del nombre del diagnostico
+def getslug(name):
+    slug = name.replace(" ", "-")
+    return slug.lower()
+
 
 def process_query(query: str):
     """
@@ -32,7 +37,6 @@ def process_query(query: str):
             {"role": "user", "content": f"""
             Diagnóstico: {result.metadata['name']}
             Resumido en una sola oración: {result.page_content}
-            Referencias: {result.metadata['reference']}
             """}
         ]
 
@@ -49,8 +53,8 @@ def process_query(query: str):
         # Crear estructura simplificada para la respuesta
         structured_response = {
             "diagnosis_name": result.metadata['name'],  # Nombre del diagnóstico
+            "slug": getslug(result.metadata['name']),  # Slug del diagnóstico
             "short_description": llm_response,         # Respuesta breve del LLM
-            "references": result.metadata['reference'],  # Referencias como array
         }
 
         response_data.append(structured_response)
