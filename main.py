@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from app.logic import process_query  # Importa la función lógica
+from app.logic import process_query, process_miyawaki_question  # Importa las funciones lógicas
 
 app = FastAPI()
 
@@ -26,30 +26,9 @@ async def get_diagnosis(query: str = Query(..., description="Consulta de diagnó
 @app.post("/question")
 async def get_answer(request: QuestionRequest):
     try:
-        # Procesar pregunta contextualizada del calendario
-        # Por ahora usamos la misma lógica, pero puedes crear una función específica
-        api_response = process_query(request.query)
-        
-        # Convertir la respuesta del diagnóstico a formato de pregunta simple
-        if api_response.get("status") == "success" and api_response.get("data"):
-            # Tomar la primera respuesta y convertirla a formato simple
-            first_result = api_response["data"][0]
-            answer = f"{first_result['diagnosis_name']}: {first_result['short_description']}"
-            
-            return JSONResponse(content={
-                "status": "success",
-                "data": {
-                    "answer": answer,
-                    "tips": ["Consulta con un especialista si los síntomas persisten", "Mantén un monitoreo regular de tus plantas"],
-                    "related_topics": [request.type],
-                    "timestamp": "2025-06-28T10:30:00Z"
-                }
-            })
-        else:
-            return JSONResponse(
-                content={"status": "error", "message": "No se pudo procesar la pregunta."},
-                status_code=500
-            )
+        # Procesar pregunta contextualizada sobre método Miyawaki Forest
+        api_response = process_miyawaki_question(request.query, request.type, request.context)
+        return JSONResponse(content=api_response)
             
     except Exception as e:
         return JSONResponse(
